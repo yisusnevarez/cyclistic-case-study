@@ -29,6 +29,9 @@ Marketing can use these insights to design strategies to convert casual riders i
 **Rides by Day of Week and User Type**  
 ![Rides by Day](RIDES_BY_WEEK.png)
 
+**dashboard visuals**
+![Cyclistic Dashboard](dashboard/Cyclistic Riders_ Annual vs. Casual Usage Patterns_.png)
+
 
 ---
 
