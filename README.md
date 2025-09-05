@@ -22,6 +22,7 @@ The goal: provide insights to help Cyclistic convert casual riders into annual m
 - Provide **weekday incentives** to encourage casual → member conversion.
 
 ## 🔗 View the Full Report
-👉 [Click here to view the HTML report] (cyclistic-bike-share--case-study.v2Rmd.html)
+👉 [View Full Report](https://yisusnevarez.github.io/repo-name/cyclistic-bike-share--case-study.v2Rmd.html)
+
 
 
