@@ -1,0 +1,184 @@
+---
+title: "cyclistic bike share V2"
+author: "Antonio Nevarez"
+date: "2025-09-04"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Business Task  
+Cyclistic wants to analyze bike-share usage patterns between **casual riders** and **annual members** to understand how to convert more casual users into members.
+
+---
+
+# Data Sources  
+- Divvy Trips Q1 2019 (CSV)  
+- Divvy Trips Q1 2020 (CSV)  
+
+Data was obtained directly from Divvy’s public datasets.
+
+---
+
+# Data Preparation & Cleaning  
+
+```{r setup, message=FALSE, warning=FALSE}
+# Load libraries
+library(tidyverse)
+library(dplyr)
+library(janitor)
+library(lubridate)
+library(readr)
+```
+
+## Import datasets
+```{R}
+divvy2019_q1 <- read.csv("C:/Users/yisus/Downloads/Divvy_Trips_2019_Q1.csv")
+divvy2020_q1 <- read.csv("C:/Users/yisus/Downloads/Divvy_Trips_2020_Q1.csv")
+```
+
+## Clean column names
+```{r}
+divvy2019_q1 <- clean_names(divvy2019_q1)
+divvy2020_q1 <- clean_names(divvy2020_q1)
+```
+## Standardize column names
+```{R}
+divvy2019_q1 <- divvy2019_q1 %>%
+  rename(
+    started_at = start_time,
+    ended_at = end_time,
+    start_station_name = from_station_name,
+    start_station_id = from_station_id,
+    end_station_name = to_station_name,
+    end_station_id = to_station_id
+
+  )
+divvy2020_q1 <- divvy2020_q1 %>% 
+  rename(usertype = member_casual)
+```
+## Combine datasets
+```{R}
+all_bike_trips <- bind_rows(divvy2019_q1, divvy2020_q1)
+```
+
+# Harmonize usertype labels
+```{R}
+all_bike_trips <- all_bike_trips %>%
+  mutate(usertype = recode(usertype, 
+                           "Subscriber" = "member",
+                           "Customer"   = "casual"))
+```
+
+## Convert datetime fields
+```{R}
+all_bike_trips <- all_bike_trips %>%
+  mutate(
+    started_at = ymd_hms(started_at),
+    ended_at   = ymd_hms(ended_at)
+  )
+```
+
+
+## Trip duration (minutes)
+```{r}
+all_bike_trips <- all_bike_trips %>%
+  mutate(ride_length = as.numeric(difftime(ended_at, started_at, units = "mins")))
+```
+
+## Remove unwanted/invalid data
+```{R}
+all_bike_trips <- all_bike_trips %>%
+  filter(ride_length >= 1 & ride_length <= 1440) %>%     # keep trips 1 min – 24 hr
+  filter(!is.na(usertype)) %>%                          # remove missing usertypes
+  distinct()                                            # remove duplicates
+```
+## Remove test rides
+```{R}
+all_bike_trips <- all_bike_trips %>%
+  filter(!(start_station_name == "HQ QR" | ride_length < 0))
+```
+
+## Create new variables
+```{R}
+all_bike_trips <- all_bike_trips %>%
+  mutate(
+    day_of_week = weekdays(started_at),
+    date        = as.Date(started_at),
+    hour        = hour(started_at),
+    month       = month(started_at, label = TRUE, abbr = TRUE),
+    is_weekend  = day_of_week %in% c("Saturday", "Sunday")
+  )
+```
+
+#Exploratory Data Analysis
+# Summary stats by usertype
+```{R}
+usertype_summary <- all_bike_trips %>%
+  group_by(usertype) %>%
+  summarise(
+    mean_length   = mean(ride_length, na.rm = TRUE),
+    median_length = median(ride_length, na.rm = TRUE),
+    max_length    = max(ride_length, na.rm = TRUE),
+    min_length    = min(ride_length, na.rm = TRUE)
+  )
+usertype_summary
+
+```
+# Analyze ridership by day of week
+```{R}
+all_bike_trips %>%
+  mutate(weekday = wday(started_at, label = TRUE)) %>%
+  group_by(usertype, weekday) %>%
+  summarise(
+    number_of_rides  = n(),
+    average_duration = mean(ride_length, na.rm = TRUE)
+  ) %>%
+  arrange(usertype, weekday)
+```
+
+#Visualizations
+# Number of rides by usertype and weekday
+```{R}
+all_bike_trips %>%
+  mutate(weekday = wday(started_at, label = TRUE)) %>%
+  group_by(usertype, weekday) %>%
+  summarise(number_of_rides = n()) %>%
+  ggplot(aes(x = weekday, y = number_of_rides, fill = usertype)) +
+  geom_col(position = "dodge") +
+  labs(title = "Number of Rides by Rider Type and Weekday",
+       x = "Day of Week", y = "Number of Rides")
+```
+# Average ride duration by usertype and weekday
+```{R}
+all_bike_trips %>%
+  mutate(weekday = wday(started_at, label = TRUE)) %>%
+  group_by(usertype, weekday) %>%
+  summarise(average_duration = mean(ride_length, na.rm = TRUE)) %>%
+  ggplot(aes(x = weekday, y = average_duration, fill = usertype)) +
+  geom_col(position = "dodge") +
+  labs(title = "Average Ride Duration by Rider Type and Weekday",
+       x = "Day of Week", y = "Average Duration (minutes)")
+```
+Results and visualizations 
+#. Key Findings / Insights  
+
+- **Annual members** ride most frequently on weekdays, with usage declining on weekends. This pattern suggests commuter-oriented behavior.  
+- **Casual riders** record longer average ride durations than members, indicating leisure or recreational usage.  
+- **Members’ peak ride times** occur during 7–8 AM and 4–5 PM, aligning with typical commuting hours.  
+- **Casual riders** show significantly higher activity on weekends, consistent with recreational and tourist use.  
+
+
+# Conclusion and Recommendations  
+
+- **Introduce weekend passes for casual riders**: Data shows casual usage is highest on weekends, suggesting strong demand for flexible short-term products.  
+- **Offer tailored membership plans**: Since many casual riders may be tourists or infrequent users, consider short-term membership variations (e.g., 1-week or monthly passes) as a bridge to annual membership.  
+- **Promote weekday incentives**: Encourage casual riders to use bikes during weekdays with discounts or promotional campaigns that highlight the convenience of membership for daily travel.  
+
+---
+
+## Data Governance  
+- Data used in this analysis comes from Divvy’s publicly available datasets.  
+- All personally identifiable information (PII) has been removed prior to analysis.  
+- Findings are based on aggregated trends, ensuring ethical and responsible use of the data.  
+
