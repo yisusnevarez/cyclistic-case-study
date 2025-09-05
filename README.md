@@ -27,14 +27,14 @@ Marketing can use these insights to design strategies to convert casual riders i
 ![Average Ride Length](visuals/average_duration_per_usertype.png)
 
 **Rides by Day of Week and User Type**  
-![Rides by Day](visuals/rides_by_day.png)
+![Rides by Day](RIDES_BY_WEEK.png)
 
 
 ---
 
 ## Analysis Report
-- [R Markdown Case Study](scripts/cyclistic-case-study.Rmd)  
-- [HTML Report](dashboards/cyclistic-case-study.html)
+- [R Markdown Case Study](Scripts/cyclistic%20bike%20share%20-case%20study.v2Rmd.Rmd)
+- [HTML Report](dashboards/cyclistic-bike-share--case-study.v2Rmd.html)
 
 ---
 
