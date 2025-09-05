@@ -16,7 +16,7 @@ Marketing can use these insights to design strategies to convert casual riders i
 ## Repository Structure
 - [data](data/) – Raw and cleaned datasets  
 - [scripts](scripts/) – R scripts for cleaning and analysis  
-- [dashboards](dashboards/) – Tableau dashboards and HTML reports  
+- [dashboard](dashboard/) – Tableau dashboards and HTML reports  
 - [visuals](visuals/) – Plots and charts generated during analysis  
 
 ---
