@@ -35,7 +35,8 @@ Marketing can use these insights to design strategies to convert casual riders i
 
 ## Analysis Report
 - [R Markdown Case Study](Scripts/cyclistic%20bike%20share%20-case%20study.v2Rmd.Rmd)
-- <a href="cyclistic-bike-share--case-study.v2Rmd.html" target="_blank">View Case Study</a>
+- [Cyclistic Case Study](https://yisusnevarez.github.io/cyclistic-case-study/cyclistic-bike-share--case-study.v2Rmd.html)
+
 
 
 )
