@@ -24,7 +24,7 @@ Marketing can use these insights to design strategies to convert casual riders i
 ## Key Visuals
 
 **Average Ride Length by User Type**  
-![Average Ride Length](visuals/avg_ride_length.png)
+![Average Ride Length](visuals/average_duration_per_usertype.png)
 
 **Rides by Day of Week and User Type**  
 ![Rides by Day](visuals/rides_by_day.png)
